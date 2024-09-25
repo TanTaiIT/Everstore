@@ -9,16 +9,35 @@ const setAccessToken = (accessToken) => {
 const setRefreshToken = (refreshToken) => {
   localStorage.setItem('refreshToken', refreshToken)
 }
+
+const userLoginIntoSession = (userInfo, shopInfo) => {
+  sessionStorage.setItem('userInfo', JSON.stringify(userInfo))
+  sessionStorage.setItem('shopInfo', JSON.stringify(shopInfo))
+}
+
+const clearStorageData = () => {
+  localStorage.removeItem('accessToken')
+  localStorage.removeItem('refreshToken')
+}
+
+const getUserInfoFromST = () => {
+  return JSON.parse(sessionStorage.getItem('userInfo')) || {}
+}
+
+const getShopInfoFromST = () => {
+  return JSON.parse(sessionStorage.getItem('shopInfo'))
+}
 export const authStore = defineStore('auth', {
   state: () => ({
-    user: null,
-    shop: null,
+    user: getUserInfoFromST(),
+    shop: getShopInfoFromST(),
     isLogin: false,
     accessToken: '',
     refreshToken: ''
   }),
 
   actions: {
+
     async authUser(user) {
       try {
         const query = {
@@ -38,10 +57,17 @@ export const authStore = defineStore('auth', {
         setAccessToken(this.accessToken)
         setRefreshToken(this.refreshToken)
 
+        userLoginIntoSession(userAuthInfo, shopBasicInfo)
+
         return response
       } catch (error) {
         console.log('errror', error)
       }
+    },
+
+    logout() {
+      this.$reset
+      clearStorageData()
     }
   },
 })
