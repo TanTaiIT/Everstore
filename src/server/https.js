@@ -1,12 +1,14 @@
 import axios from 'axios'
 
+const base_url = 'https://ahasoft-salon-admin-http-aggregator-staging.azurewebsites.net'
 export const createHttp = ({type = '', version = 1, options = {}}) => {
   const http = axios.create({
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     },
-    baseURL: `${ process.env.BASE_URL}/api/${type}/v${version}`, ...(options?.responseType && {responseType: options.responseType})
+    timeout: 10000,
+    baseURL: `${base_url}/api/${type}/v${version}`, ...(options?.responseType && {responseType: options.responseType})
   })
 
   return http

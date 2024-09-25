@@ -10,6 +10,7 @@ export default {
       'gray-normal': '#e6e6e6'
     }
   },
-  plugins: [],
+  plugins: [
+  ],
 }
 

@@ -24,16 +24,42 @@
 import { ref } from 'vue'
 import { authStore } from '../store'
 import LogoImage from './../assets/template/images/ahasoft-logo.png'
+import { useRouter } from 'vue-router'
+import { useLoading } from '../composable/useLoading'
 
+const router = useRouter()
 const store = authStore()
+const { startLoading, stopLoading } = useLoading()
+const { authUser } = store
 const loginData = ref({
   userName: '',
   password: ''
 })
 
-const onLogin = (e) => {
+const goToHomePage = () => {
+  console.log('go here')
+  router.push({name: 'home',})
+}
+
+const onLogin = async(e) => {
   e.preventDefault()
-  console.log('store', store)
+  
+  try {
+    startLoading()
+    const payload = {
+      user_name: loginData.value.userName,
+      password: loginData.value.password
+    }
+    const response = await authUser(payload)
+
+    if(response?.data?.isOK) {
+      goToHomePage()
+    }
+  } catch (error) {
+    console.log('error', error)
+  } finally {
+    stopLoading()
+  }
   
 }
 
