@@ -13,11 +13,13 @@ const setRefreshToken = (refreshToken) => {
 const userLoginIntoSession = (userInfo, shopInfo) => {
   sessionStorage.setItem('userInfo', JSON.stringify(userInfo))
   sessionStorage.setItem('shopInfo', JSON.stringify(shopInfo))
+  sessionStorage.setItem('isLogin', true)
 }
 
 const clearStorageData = () => {
   localStorage.removeItem('accessToken')
   localStorage.removeItem('refreshToken')
+  sessionStorage.clear()
 }
 
 const getUserInfoFromST = () => {
@@ -31,13 +33,12 @@ export const authStore = defineStore('auth', {
   state: () => ({
     user: getUserInfoFromST(),
     shop: getShopInfoFromST(),
-    isLogin: false,
+    isLogin: sessionStorage.getItem('isLogin'),
     accessToken: '',
     refreshToken: ''
   }),
 
   actions: {
-
     async authUser(user) {
       try {
         const query = {

@@ -10,9 +10,6 @@
     </div>
 
     <div class="flex items-center justify-center gap-4">
-      <!-- <Button class="px-3 rounded-full">
-        <span class="pi pi-home" />
-      </Button> -->
       <button class="bg-purple-normal px-3 py-2 rounded-full text-white-normal">
         <span class="pi pi-home text-xl" @click="goToHomeScreen" />
       </button>

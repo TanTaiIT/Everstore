@@ -5,9 +5,9 @@ import { createPinia } from 'pinia'
 import router from './routes/routers'
 import 'primeicons/primeicons.css'
 
-const pinia = createPinia(App)
 const app = createApp(App)
+const pinia = createPinia(App)
 app.config.devtools = true
-app.use(router)
 app.use(pinia)
+app.use(router)
 app.mount('#app')

@@ -3,6 +3,7 @@ import { createWebHistory, createRouter } from "vue-router"
 import Login from "../views/Login.vue"
 import Home from "../views/Home.vue"
 import MainLayout from "../layouts/MainLayout.vue"
+import { authStore } from './../store/AuthStore.js'
 
 const routers = [
   {
@@ -25,9 +26,20 @@ const routers = [
   }
 ]
 
+
 const router = createRouter({
   history: createWebHistory(),
   routes: routers
+})
+
+router.beforeEach((to, from, next) => {
+  const store = authStore()
+  const { isLogin } = store
+  if (!isLogin && to.name !== 'login') {
+    next({ name: 'login' })
+  }
+
+  next()
 })
 
 export default router

@@ -4,14 +4,14 @@
     <p>{{ user.userID }}</p>
     <span class="pi pi-angle-down"/>
 
-    <Dropdown :visible="isShowDropdown"/>
+    <Dropdown :visible="isShowDropdown" :options="useAccountOptions"/>
 
 
   </div>
 </template>
 
 <script  setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { authStore } from '../../store'
 import Dropdown from '../dropdown/Dropdown.vue'
 
@@ -30,5 +30,22 @@ const handleCheckOutSide = () => {
 
 onMounted(() => {
   document.addEventListener('mousenter', handleCheckOutSide())
+})
+
+const useAccountOptions = computed(() => {
+  return [
+    {
+      label: 'login History',
+      value: 0
+    },
+    {
+      label: 'Payment',
+      value: 1
+    },
+    {
+      label: 'Account',
+      value: 2
+    }
+  ]
 })
 </script>
