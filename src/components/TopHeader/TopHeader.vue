@@ -14,7 +14,10 @@
         <span class="pi pi-home text-xl" @click="goToHomeScreen" />
       </button>
 
-      <UserAction />
+      <div>
+        <UserAction />
+      </div>
+
 
       <div class="px-2 cursor-pointer" @click="onLogout">
         <span class="pi pi-sign-out" />

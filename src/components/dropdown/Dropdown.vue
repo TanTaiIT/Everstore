@@ -1,30 +1,39 @@
 <template>
-  <div class="absolute top-[100%] shadow-md right-0 w-[150px] hover:opacity-1" :class="displayClass">
-    <ul class="w-full">
-      <li v-for="(item, index) in options" :key={index} class="px-2 border-b-2 border-gray-normal py-2 flex items-center w-full hover:bg-blue-normal transition-all">
-        {{ item.label }}
-      </li>
-    </ul>
+  <div>
+    <slot name="toggle" v-bind="slotProps"/>
+
+    <div class="shadow-md absolute w-[150px] border-[1px] border-gray-normal bg-white-normal z-10" v-if="isShowDropDown">
+      <ul>
+        <li v-for="(item, index) in options" :key="index" class="hover:bg-blue-normal p-2 transition-all cursor-pointer">
+          <span>{{ item.label }}</span>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { computed, defineProps } from 'vue'
+import { computed, defineProps, ref } from 'vue'
 
 const props = defineProps({
-  visible: {
-    type: Boolean,
-    default: false
-  },
-
   options: {
     type: Array,
     default: []
   }
 })
 
-const displayClass = computed(() => {
-  return props.visible ? 'block' : 'hidden'
+const isShowDropDown = ref(false)
 
+const toggleDropdown = () => {
+  if(!isShowDropDown.value) {
+    isShowDropDown.value = true
+  } else {
+    isShowDropDown.value = false
+  }
+}
+const slotProps = computed(() => {
+  return {
+    toggle: toggleDropdown
+  }
 })
 </script>

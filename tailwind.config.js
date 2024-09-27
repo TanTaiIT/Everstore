@@ -8,7 +8,10 @@ export default {
       'blue-hover': '#0069d9',
       'white-normal': '#ffffff',
       'gray-normal': '#e6e6e6',
-      'purple-normal': '#7c79b6'
+      'purple-normal': '#7c79b6',
+      'green-menu': '#2b5163',
+      'menu-hover': '#254554',
+      'blue-footer': '#c9e0e0'
     }
   },
   plugins: [
