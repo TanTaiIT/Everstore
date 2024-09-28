@@ -37,13 +37,13 @@ const loginData = ref({
 })
 
 const goToHomePage = () => {
-  console.log('go here')
-  router.push({name: 'home',})
+  router.push({name: 'home'})
+
 }
 
 const onLogin = async(e) => {
   e.preventDefault()
-  
+
   try {
     startLoading()
     const payload = {
@@ -60,7 +60,7 @@ const onLogin = async(e) => {
   } finally {
     stopLoading()
   }
-  
+
 }
 
 </script>

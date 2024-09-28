@@ -7,11 +7,9 @@ export function useLoading(loading) {
   const isLoading = ref(false)
 
   const startLoading = () => {
-    console.log('start')
     setLoading(true)
   }
   const stopLoading = () => {
-    console.log('stop')
     setLoading(false)
   }
 

@@ -11,7 +11,9 @@ export default {
       'purple-normal': '#7c79b6',
       'green-menu': '#2b5163',
       'menu-hover': '#254554',
-      'blue-footer': '#c9e0e0'
+      'blue-footer': '#c9e0e0',
+      'green': '#c1de92',
+      'orange': '#fad58e',
     }
   },
   plugins: [

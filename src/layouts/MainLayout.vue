@@ -1,14 +1,16 @@
 <template>
   <div class="w-full h-full overflow-y-auto">
-    <div class="flex justify-between flex-col h-full bg-gray-normal">
+    <div class="bg-gray-normal">
       <header>
         <TopHeader />
         <Menu />
       </header>
-      <main>
-        <slot />
+      <main class="p-5">
+        <slot>
+          <router-view />
+        </slot>
       </main>
-      <footer>
+      <footer class="fixed bottom-0 w-full">
         <Footer />
       </footer>
     </div>
@@ -19,4 +21,23 @@
 import Menu from '../components/Menu/Menu.vue';
 import Footer from '../components/Footer/Footer.vue';
 import TopHeader from '../components/TopHeader/TopHeader.vue';
+import { onBeforeMount } from 'vue';
+import { useLoading } from '../composable/useLoading';
+import useShopData from '../composable/useShopData';
+
+const { startLoading, stopLoading } = useLoading()
+const { getShopInfo } = useShopData()
+const getShopBasicInfo = async() => {
+  try {
+    startLoading()
+    const response = await getShopInfo()
+  } catch (error) {
+    console.log('error', error)
+  } finally {
+    stopLoading()
+  }
+}
+onBeforeMount(() => {
+  getShopBasicInfo()
+})
 </script>

@@ -13,17 +13,21 @@ const routers = [
   },
 
   {
-    name: '',
-    path: '/',
+    name: '/',
     component: MainLayout,
     children: [
       {
         name: 'home',
-        path: '/',
-        component: Home
+        path: '/home',
+        component: Home,
+        meta: {
+          preload: true
+        }
       }
     ]
   }
+
+
 ]
 
 

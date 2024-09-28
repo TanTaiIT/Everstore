@@ -66,6 +66,16 @@ export const authStore = defineStore('auth', {
       }
     },
 
+    // async refreshTokenApi(refreshToken, accessToken, country) {
+    //   try {
+    //     const payload = {
+
+    //     }
+    //   } catch (error) {
+
+    //   }
+    // },
+
     logout() {
       this.$reset
       clearStorageData()

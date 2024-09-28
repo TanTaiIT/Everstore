@@ -6,7 +6,7 @@ import MainLayout from './layouts/MainLayout.vue';
 
 <template>
   <div class="w-full h-full">
-    <router-view/>
+    <router-view />
     <Loading :key="'app-spiner'"/>
   </div>
 </template>
