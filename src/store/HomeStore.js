@@ -9,7 +9,7 @@ export const useHomeStore = defineStore('home', {
   },
 
   actions: {
-    async getHomeData(payload) {
+    async fetchHomeData(payload) {
       try {
         const response = await getBasisShopInfo()
       } catch (error) {

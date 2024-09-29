@@ -10,22 +10,37 @@
 import { BOARD_TYPE } from '../constant/common';
 import { useLoading } from '../composable/useLoading';
 import HomeBoard from '../components/HomeBoard/HomeBoard.vue'
-import { onBeforeMount } from 'vue';
-const { startLoading, stopLoading } = useLoading()
+import { onBeforeMount, onMounted } from 'vue';
+import { authStore, useHomeStore } from '../store';
+import moment from 'moment';
 
-const getHomeBoardData = () => {
+const { startLoading, stopLoading } = useLoading()
+const { fetchHomeData } = useHomeStore()
+const { shop } = authStore()
+const getHomeData = async() => {
   try {
     startLoading()
-
+    const currentDate = moment(new Date())
+    console.log('moment', currentDate)
+    const payload = {
+      branchType: shop?.chainInfo?.branchType,
+      businessTypeCode: shop?.businessTypeCode,
+      chainId: shop?.chainInfo?.chainId,
+      countryCode: 'VN',
+      shopId: shop?.shopId,
+      solutionId: 3002,
+      todayTS: currentDate
+    }
+    const response = await fetchHomeData()
   } catch (error) {
-    console.log('error', error)
+    throw new Error(error)
   } finally {
     stopLoading()
   }
 }
-
 onBeforeMount(() => {
-  getHomeBoardData()
+  getHomeData()
 })
+
 
 </script>
