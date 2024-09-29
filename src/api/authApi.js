@@ -9,6 +9,6 @@ export const getBasisShopInfo = async () => {
   return await aggrHttp.get('/UserAccount/GetBasicAccountInfo')
 }
 
-export const refreshToken = async (country, payload) => {
-  return await aggrHttp.post('/auth/RefreshToken' + country, payload)
+export const refreshTokenShop = async (country, payload) => {
+  return await aggrHttp.post('/auth/RefreshToken?' + country, payload)
 }

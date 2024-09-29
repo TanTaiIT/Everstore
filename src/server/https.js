@@ -1,5 +1,6 @@
 import axios from 'axios'
 const base_url = 'https://ahasoft-salon-admin-http-aggregator-staging.azurewebsites.net'
+import { authStore } from '../store/AuthStore'
 const DEFAULT_HEADERS = {
   'Accept': 'application/json',
   'Content-Type': 'application/json',
@@ -16,8 +17,33 @@ const checkUserLogin = () => {
     throw new Error(error)
   }
 }
-export const createHttp = ({ type = '', version = 1, options = {} }) => {
 
+const waitRefreshTokenComplete = async () => {
+  console.log('waitRefreshTokenComplete')
+  return new Promise((resolve) => {
+    const auth = authStore()
+    if (!auth.isRefreshTokenOK) {
+      return resolve(auth.isRefreshTokenOK)
+    }
+
+    const unwatcher = watch(() => auth.isRefreshingToken, (isRefreshingToken) => {
+      if (!isRefreshingToken) {
+        unwatcher()
+        resolve(auth.isRefreshTokenOK)
+      }
+    }, { immediate: true })
+  })
+}
+
+const waitRefreshToken = async (config) => {
+  const { setRefreshingToken } = authStore()
+  await waitRefreshTokenComplete()
+  if (config.url.match('/auth/RefreshToken')) {
+    setRefreshingToken(true)
+  }
+  return config
+}
+export const createHttp = ({ type = '', version = 1, options = {} }) => {
   const http = axios.create({
     headers: {
       'Content-Type': 'application/json',
@@ -28,19 +54,34 @@ export const createHttp = ({ type = '', version = 1, options = {} }) => {
   })
 
   // axios request
+  http.interceptors.request.use(waitRefreshToken)
   http.interceptors.request.use(function (config) {
     const isLogin = checkUserLogin()
+    const { accessToken, isRefreshingToken } = authStore()
     if (isLogin) {
-      const accessToken = localStorage.getItem('accessToken') || ''
-      console.log('acccesToken', accessToken)
       config.headers.Authorization = `Bearer ${accessToken}`
     }
     return config
   })
 
   // axios response
-  http.interceptors.response.use(function (response) {
-    console.log('response', response)
+  http.interceptors.response.use(null, async error => {
+    try {
+      const { refreshTokenApi, accessToken, refreshToken } = authStore()
+      if (error.status === 401) {
+        const accessToken = localStorage.getItem('accessToken') || ''
+        const refreshToken = localStorage.getItem('refreshToken') || ''
+        const response = await refreshTokenApi(refreshToken, accessToken)
+        if (response?.data?.isOK) {
+          return axios(error?.config)
+        }
+      }
+
+      return Promise.reject(error)
+    } catch (error) {
+      throw error
+    }
+
   })
 
 

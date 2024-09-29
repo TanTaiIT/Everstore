@@ -14,6 +14,7 @@ const routers = [
 
   {
     name: '/',
+    path: '',
     component: MainLayout,
     children: [
       {

@@ -32,7 +32,7 @@ const getShopBasicInfo = async() => {
     startLoading()
     const response = await getShopInfo()
   } catch (error) {
-    console.log('error', error)
+    // console.log('error', error)
   } finally {
     stopLoading()
   }

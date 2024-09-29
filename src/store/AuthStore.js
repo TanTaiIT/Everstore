@@ -1,5 +1,5 @@
 import { defineStore } from "pinia"
-import { userLogin } from "../api/authApi"
+import { userLogin, refreshTokenShop } from "../api/authApi"
 
 const culture = 'culture=en-US&ui-culture=en-US'
 
@@ -34,11 +34,17 @@ export const authStore = defineStore('auth', {
     user: getUserInfoFromST(),
     shop: getShopInfoFromST(),
     isLogin: sessionStorage.getItem('isLogin'),
-    accessToken: '',
-    refreshToken: ''
+    accessToken: localStorage.getItem('accessToken') || '',
+    refreshToken: localStorage.getItem('refreshToken') || '',
+    isRefreshingToken: false,
+    isRefreshTokenOK: false
   }),
 
   actions: {
+    setRefreshingToken(refreshToken) {
+      this.isRefreshingToken = refreshToken
+    },
+
     async authUser(user) {
       try {
         const query = {
@@ -48,33 +54,50 @@ export const authStore = defineStore('auth', {
         }
 
         const response = await userLogin(culture, query)
-        const { shopBasicInfo, userAuthInfo } = response?.data?.result || {}
-        this.user = userAuthInfo
-        this.shop = shopBasicInfo
-        this.accessToken = userAuthInfo?.authToken
-        this.refreshToken = userAuthInfo?.refreshToken
-        this.isLogin = true
+        console.log('response', response)
+        if (response?.data?.isOK) {
+          const { shopBasicInfo, userAuthInfo } = response?.data?.result || {}
+          this.user = userAuthInfo
+          this.shop = shopBasicInfo
+          this.accessToken = userAuthInfo?.authToken
+          this.refreshToken = userAuthInfo?.refreshToken
+          this.isLogin = true
 
-        setAccessToken(this.accessToken)
-        setRefreshToken(this.refreshToken)
+          setAccessToken(this.accessToken)
+          setRefreshToken(this.refreshToken)
 
-        userLoginIntoSession(userAuthInfo, shopBasicInfo)
+          userLoginIntoSession(userAuthInfo, shopBasicInfo)
+          return response
+        }
+        return
 
-        return response
       } catch (error) {
         console.log('errror', error)
       }
     },
 
-    // async refreshTokenApi(refreshToken, accessToken, country) {
-    //   try {
-    //     const payload = {
+    async refreshTokenApi(refreshToken, accessToken) {
+      this.setRefreshingToken(true)
+      try {
+        const payload = {
+          refreshToken: refreshToken,
+          authToken: accessToken
+        }
+        const response = await refreshTokenShop(culture, payload)
+        this.isRefreshingToken = false
+        if (response?.data?.isOK) {
+          this.accessToken = response?.data?.result?.authToken
+          this.refreshToken = response?.data?.result?.refreshToken
+          this.isRefreshTokenOK = true
+          setAccessToken(this.accessToken)
+          setRefreshToken(this.refreshToken)
 
-    //     }
-    //   } catch (error) {
-
-    //   }
-    // },
+          return response
+        }
+      } catch (error) {
+        throw new Error(error)
+      }
+    },
 
     logout() {
       this.$reset

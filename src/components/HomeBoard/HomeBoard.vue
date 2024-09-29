@@ -5,13 +5,13 @@
       {{ title }}
       </span>
       <div class="h-[250px] bg-white-normal rounded-md">
-
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { reactive, ref, watch } from 'vue'
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -25,6 +25,9 @@ const props = defineProps({
     default: 1
   }
 })
+
+
+const messageTotal = computed(() => message.value + message2.value)
 
 const labelStyleColor = computed(() => {
   switch(props.type) {
