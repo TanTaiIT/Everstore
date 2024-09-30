@@ -5,13 +5,17 @@
       {{ title }}
       </span>
       <div class="h-[250px] bg-white-normal rounded-md">
+        <ul v-if="data.length">
+          <li v-for="item in data" :key="item.noticeId">
+            {{ item.content }}sadfasdfsa
+          </li>
+        </ul>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref, watch } from 'vue'
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -23,6 +27,11 @@ const props = defineProps({
   type: {
     type: Number,
     default: 1
+  },
+
+  data: {
+    type: Array,
+    default: []
   }
 })
 

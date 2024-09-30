@@ -1,5 +1,5 @@
 import { defineStore } from "pinia"
-import { getBasisShopInfo } from "../api/authApi"
+import { fetchHomeApi } from "../api/HomeApi"
 export const useHomeStore = defineStore('home', {
   state: () => {
     return {
@@ -8,12 +8,23 @@ export const useHomeStore = defineStore('home', {
     }
   },
 
+  getters: () => {
+    getSystemNotice = () => {
+      return systemNotice
+    }
+  },
+
   actions: {
     async fetchHomeData(payload) {
       try {
-        const response = await getBasisShopInfo()
+        const response = await fetchHomeApi(payload)
+
+        if (response?.data?.isOK) {
+          this.systemNotice = response?.data?.result?.systemNotices
+          this.systemBoard = response?.data?.result?.systemBoards
+        }
       } catch (error) {
-        console.log('error', error)
+        throw new Error(error)
       }
     }
   }
