@@ -54,7 +54,13 @@ export const MENU = [
 
   {
     name: 'Setup',
-    to: '/setup'
+    to: '/setup',
+    submenu: [
+      {
+        name: 'service',
+        to: '/setup/service'
+      }
+    ]
   },
 
 ]

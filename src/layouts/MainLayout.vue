@@ -23,21 +23,7 @@ import Footer from '../components/Footer/Footer.vue';
 import TopHeader from '../components/TopHeader/TopHeader.vue';
 import { onBeforeMount } from 'vue';
 import { useLoading } from '../composable/useLoading';
-import useShopData from '../composable/useShopData';
 
 const { startLoading, stopLoading } = useLoading()
-const { getShopInfo } = useShopData()
-const getShopBasicInfo = async() => {
-  try {
-    startLoading()
-    const response = await getShopInfo()
-  } catch (error) {
-    // console.log('error', error)
-  } finally {
-    stopLoading()
-  }
-}
-onBeforeMount(() => {
-  getShopBasicInfo()
-})
+
 </script>

@@ -3,13 +3,12 @@ import { useLoading } from "./useLoading"
 import { useHomeStore } from "../store"
 export default function useShopData() {
   const { startLoading, stopLoading } = useLoading()
-  const { getHomeData } = useHomeStore()
 
   const getShopInfo = async () => {
     try {
       startLoading()
-      const response = await getHomeData()
-      return response
+      // const response = await getHomeData()
+      // return response
 
     } catch (error) {
       console.log('error', error)

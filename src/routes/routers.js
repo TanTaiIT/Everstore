@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from "vue-router"
 
 import Login from "../views/Login.vue"
 import Home from "../views/Home.vue"
+import Service from "../views/Service.vue"
 import MainLayout from "../layouts/MainLayout.vue"
 import { authStore } from './../store/AuthStore.js'
 
@@ -24,9 +25,17 @@ const routers = [
         meta: {
           preload: true
         }
+      },
+
+      {
+        name: 'service',
+        path: '/service',
+        component: Service,
       }
     ]
-  }
+  },
+
+
 
 
 ]
