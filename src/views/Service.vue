@@ -1,7 +1,14 @@
 <script setup>
+import { ref } from 'vue';
 import Button from '../components/Button/Button.vue';
 import Checkbox from '../components/Checkbox/Checkbox.vue';
 import TitlePage from '../components/TitlePage/TitlePage.vue';
+import ServiceAction from '../components/ServiceAction/ServiceAction.vue';
+const isShowServiceAction = ref(false)
+
+const addServiceCategoryAction = () => {
+  isShowServiceAction.value = true
+}
 </script>
 <template>
   <div class="service">
@@ -21,7 +28,7 @@ import TitlePage from '../components/TitlePage/TitlePage.vue';
               </Checkbox>
 
               <div class="text-right">
-                <Button> Category </Button>
+                <Button @click="addServiceCategoryAction"> Add Category </Button>
               </div>
         </div>
             <table>
@@ -138,6 +145,8 @@ import TitlePage from '../components/TitlePage/TitlePage.vue';
         </div>
       </div>
     </div>
+
+    <service-action :visible="isShowServiceAction" @hide-modal="isShowServiceAction = false"/>
   </div>
 </template>
 

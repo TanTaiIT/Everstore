@@ -15,8 +15,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps, ref } from 'vue'
-import { onMounted, onBeforeUnmount } from 'vue'
+import { computed, defineProps, ref,  onMounted, onBeforeUnmount  } from 'vue'
 
 const dropdownRef = ref(null)
 onMounted(() => {
