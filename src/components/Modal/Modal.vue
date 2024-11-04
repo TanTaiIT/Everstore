@@ -1,5 +1,9 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
+
+defineEmits([
+  'close-modal'
+])
 const props = defineProps({
   title: {
     type: String,
@@ -19,6 +23,11 @@ const props = defineProps({
   visible: {
     type: Boolean,
     default: false
+  },
+
+  closeBackDrop: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -32,11 +41,12 @@ const modalClass = computed(() => {
 </script>
 
 <template>
+  <div>
+    <div v-if="visible" class="w-full h-full fixed left-0 top-0 bg-gray-normal opacity-[0.5] z-100" ></div>
   <transition name="modal" class="absolute inset-0 m-auto mx-auto my-auto h-60">
-    
     <div v-if="visible" class="bg-white-normal rounded-md p-3 shadow-md" :class="modalClass">
-      <div class="w-full h-full bg-gray-normal opacity-[0.5]"></div>
-      <div class="">
+
+      <div class="py-3 text-lg font-800">
         <h1>{{ title }}</h1>
       </div>
 
@@ -45,12 +55,13 @@ const modalClass = computed(() => {
       </div>
 
       <div class="mt-3">
-        <div class="absolute bottom-2 right-2">
+        <div class="absolute bottom-2 right-2 flex gap-3">
           <slot name="actions" />
         </div>
       </div>
     </div>
 </transition>
+</div>
 </template>
 
 <style lang="scss" scoped>

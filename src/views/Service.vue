@@ -17,7 +17,6 @@ const addServiceCategoryAction = () => {
 
       <div class="body-wrapper mt-2 p-3">
 
-
         <div class="flex mt-5 gap-[10px]">
           <div class="flex-1">
             <div class="flex items-center justify-between mb-3">
