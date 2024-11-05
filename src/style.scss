@@ -60,6 +60,9 @@ table {
   }
 
   tbody {
+    max-height: 300px;
+    overflow: auto;
+
     tr {
       &:hover {
         cursor: pointer;

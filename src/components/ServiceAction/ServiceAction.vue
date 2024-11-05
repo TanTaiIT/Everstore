@@ -5,6 +5,8 @@ import { useService } from '../../store';
 import ServiceViewModel from '../../ViewModel/ServiceCategoryViewModel';
 import { useLoading } from '../../composable/useLoading';
 import { authStore } from '../../store';
+import { AddServiceCategoryApi } from '../../api/servicesApi.js';
+import { getCurrentInstance } from 'vue';
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -12,8 +14,8 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['hide-modal'])
+const { proxy } = getCurrentInstance()
 const serviceActionData = ref({})
-const { AddServiceCategory }  = useService()
 const { shop } = authStore()
 const { startLoading, stopLoading } = useLoading()
 
@@ -23,7 +25,7 @@ watch(() => props.visible, (value) => {
     serviceActionData.value = serviceCategoryById
   } else {
     const { setServiceCategory } = useService()
-    setServiceCategory(new ServiceViewModel()) 
+    setServiceCategory(new ServiceViewModel())
   }
 })
 
@@ -37,14 +39,16 @@ const onConfirm = async () => {
       shopId: shop.shopId,
       status: 1
     }
-    const response = await AddServiceCategory(payload)
+    const response = await AddServiceCategoryApi(payload)
+    console.log('response', response)
     if(!response.data.isOK) {
-      throw new Error(response.data.error_message)
+      proxy.$toast.error(response.data.error_message)
+      return
     }
 
     emit('add-category')
   } catch (error) {
-    throw new Error(error)
+    proxy.$toast.error(error.message)
   } finally {
     stopLoading()
   }

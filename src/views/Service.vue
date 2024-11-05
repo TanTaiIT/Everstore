@@ -7,6 +7,7 @@ import Checkbox from '../components/Checkbox/Checkbox.vue';
 import TitlePage from '../components/TitlePage/TitlePage.vue';
 import ServiceAction from '../components/ServiceAction/ServiceAction.vue';
 import { authStore } from '../store';
+import ServiceViewModel from '../ViewModel/ServiceCategoryViewModel';
 
 const isShowServiceAction = ref(false)
 const filterData = reactive({
@@ -16,12 +17,15 @@ const filterData = reactive({
   status: 1
 })
 const { shop } = authStore()
-const { proxy } = getCurrentInstance()
-const { getServiceCategoryData, getServiceCategoryById, serviceCategoryById } = useService()
+const { getServiceCategoryData, setAction } = useService()
 const serviceCategory = ref([])
 const { startLoading, stopLoading } = useLoading()
 const addServiceCategoryAction = () => {
   isShowServiceAction.value = true
+  setAction({
+    action: 0,
+    data: new ServiceViewModel()
+  })
 }
 
 onMounted(() => {
@@ -38,7 +42,7 @@ const getServicesCategory = async () => {
       return
     }
     serviceCategory.value = response?.data?.result?.items || []
-    
+
   } catch (error) {
     throw new Error(error)
   } finally {
@@ -47,7 +51,17 @@ const getServicesCategory = async () => {
 }
 
 const onEditServiceCategory = (id) => {
-  getServiceCategoryById(id)
+  const findIndex = serviceCategory.value.findIndex(item => item.serviceCategoryId === id)
+
+  const signleCategory = new ServiceViewModel()
+  if(findIndex !== -1) {
+    signleCategory = serviceCategory[findIndex]
+  }
+
+  setAction({
+    action: 1,
+    data: signleCategory
+  })
   isShowServiceAction.value = true
 }
 

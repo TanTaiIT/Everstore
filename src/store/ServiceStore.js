@@ -4,6 +4,7 @@ import ServiceCategoryViewModel from "../ViewModel/ServiceCategoryViewModel.js"
 export const useService = defineStore('service', {
   state: () => ({
     serviceCategory: [],
+    action: 0,
     serviceCategoryById: new ServiceCategoryViewModel()
   }),
 
@@ -12,7 +13,7 @@ export const useService = defineStore('service', {
       try {
         const response = await ServiceCategory(query)
         console.log('response', response)
-        if(response?.data?.isOK) {
+        if (response?.data?.isOK) {
           this.serviceCategory = response?.data?.result?.items || []
         }
         this.serviceCategory = response?.data?.result?.items || []
@@ -28,7 +29,7 @@ export const useService = defineStore('service', {
     async getServiceCategoryById(id) {
       const findIndex = this.serviceCategory.findIndex(item => item.serviceCategoryId === id)
 
-      if(findIndex !== -1) {
+      if (findIndex !== -1) {
         this.serviceCategoryById = Object.assign({}, this.serviceCategory[findIndex])
       }
     },
@@ -37,11 +38,16 @@ export const useService = defineStore('service', {
       this.serviceCategoryById = new ServiceCategoryViewModel()
     },
 
+    setAction(data) {
+      this.serviceCategoryById = data.data
+      this.action = data.action
+    },
+
     async AddServiceCategory(query) {
       try {
         const response = await AddServiceCategoryApi(query)
         console.log('response', response)
-        if(!response?.data?.isOK) {
+        if (!response?.data?.isOK) {
           throw new Error(response?.data?.errorMessages)
         }
 
