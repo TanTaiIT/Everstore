@@ -5,8 +5,8 @@ import { createPinia } from 'pinia'
 import router from './routes/routers'
 import 'primeicons/primeicons.css'
 import Modal from './components/Modal/Modal.vue'
-
-//Directive
+import 'vue-toast-notification/dist/theme-bootstrap.css'
+import Toasttify from './plugins/Toastify.js'
 import Directive from './plugins/Directive.js'
 
 const app = createApp(App)
@@ -16,4 +16,5 @@ app.component('Modal', Modal)
 app.use(pinia)
 app.use(router)
 app.use(Directive)
+app.use(Toasttify)
 app.mount('#app')

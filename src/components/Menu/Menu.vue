@@ -6,7 +6,7 @@ import { computed } from 'vue';
 
 <template>
   <div class="w-full bg-green-menu text-white-normal flex items-center justify-between">
-    <ul class="flex items-center justify-between w-full">
+    <ul class="flex items-center justify-between w-full px-20">
       <li v-for="(menu, index) in MENU" :key="`menu-${index}`" class="px-4 py-3 uppercase hover:bg-menu-hover cursor-pointer relative group">
         <span>{{ menu.name }}</span>
         <ul :class="`absolute top-[100%] w-[200px] hidden group-hover:block z-10 ${MENU[MENU.length - 1].name === menu.name ? 'right-[0]' : 'left-[0]'}`">
