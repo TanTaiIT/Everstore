@@ -1,13 +1,14 @@
 <script setup>
-import { onMounted, reactive, ref, getCurrentInstance } from 'vue';
-import Button from '../components/Button/Button.vue';
-import { useService } from '../store';
-import { useLoading } from '../composable/useLoading';
-import Checkbox from '../components/Checkbox/Checkbox.vue';
-import TitlePage from '../components/TitlePage/TitlePage.vue';
-import ServiceAction from '../components/ServiceAction/ServiceAction.vue';
-import { authStore } from '../store';
-import ServiceViewModel from '../ViewModel/ServiceCategoryViewModel';
+import { onMounted, reactive, ref, getCurrentInstance } from 'vue'
+import Button from '../components/Button/Button.vue'
+import { useService } from '../store'
+import { useLoading } from '../composable/useLoading'
+import Checkbox from '../components/Checkbox/Checkbox.vue'
+import TitlePage from '../components/TitlePage/TitlePage.vue'
+import ServiceAction from '../components/ServiceAction/ServiceAction.vue'
+import { authStore } from '../store'
+import ServiceViewModel from '../ViewModel/ServiceCategoryViewModel'
+import { ServiceApi } from '../api/servicesApi'
 
 const isShowServiceAction = ref(false)
 const filterData = reactive({
@@ -16,9 +17,13 @@ const filterData = reactive({
   shopId: 0,
   status: 1
 })
+
 const { shop } = authStore()
+const { proxy } = getCurrentInstance()
 const { getServiceCategoryData, setAction } = useService()
 const serviceCategory = ref([])
+const services = ref([])
+const currentPrepaidServiceId = ref(0)
 const { startLoading, stopLoading } = useLoading()
 const addServiceCategoryAction = () => {
   isShowServiceAction.value = true
@@ -28,20 +33,21 @@ const addServiceCategoryAction = () => {
   })
 }
 
-onMounted(() => {
+onMounted(async() => {
   filterData.shopId = shop.shopId
-  getServicesCategory()
+  await getServicesCategory()
+  getService()
 })
 
 const getServicesCategory = async () => {
   try {
     startLoading()
     const response = await getServiceCategoryData(filterData)
-    console.log('response', response)
     if(!response.data.isOK) {
       return
     }
     serviceCategory.value = response?.data?.result?.items || []
+    currentPrepaidServiceId.value = serviceCategory.value[0]?.serviceCategoryId
 
   } catch (error) {
     throw new Error(error)
@@ -50,12 +56,32 @@ const getServicesCategory = async () => {
   }
 }
 
+const getService = async () => {
+  try {
+    startLoading()
+
+    const payload = {...filterData, serviceCategoryId: currentPrepaidServiceId.value}
+    const response = await ServiceApi(payload)
+
+    if(!response.data.isOK) {
+      proxy.$toast(response.data.error_message)
+      return
+    }
+
+    services.value = response.data.result.items || []
+  } catch (error) {
+    proxy.$toast(error.message)
+  } finally {
+    stopLoading()
+  }
+}
+
 const onEditServiceCategory = (id) => {
   const findIndex = serviceCategory.value.findIndex(item => item.serviceCategoryId === id)
 
-  const signleCategory = new ServiceViewModel()
+  let signleCategory = new ServiceViewModel()
   if(findIndex !== -1) {
-    signleCategory = serviceCategory[findIndex]
+    signleCategory = serviceCategory.value[findIndex]
   }
 
   setAction({
@@ -68,6 +94,11 @@ const onEditServiceCategory = (id) => {
 const onAddServiceCategory = () => {
   getServicesCategory()
   isShowServiceAction.value = false
+}
+
+const onViewService = (id) => {
+  currentPrepaidServiceId.value = id
+  getService()
 }
 </script>
 <template>
@@ -90,6 +121,7 @@ const onAddServiceCategory = () => {
                 <Button @click="addServiceCategoryAction"> Add Category </Button>
               </div>
         </div>
+        <div class="h-[500px] overflow-auto">
             <table>
               <thead>
                 <tr>
@@ -105,13 +137,14 @@ const onAddServiceCategory = () => {
                   <td>X</td>
                   <td>{{ category.serviceCategoryName }}</td>
                   <td><Button :outline="true" variant="white-normal" text-color="blue-normal" @click="onEditServiceCategory(category.serviceCategoryId)">Edit</Button></td>
-                  <td><Button text-color="white-normal">View</Button></td>
+                  <td><Button text-color="white-normal" @click="onViewService(category.serviceCategoryId)">View</Button></td>
                 </tr>
                 <tr>
                   <td colspan="4" v-if="serviceCategory.length === 0">No data for table</td>
                 </tr>
               </tbody>
             </table>
+          </div>
           </div>
 
           <div class="flex-1">
@@ -145,47 +178,15 @@ const onAddServiceCategory = () => {
               </thead>
 
               <tbody>
-                <tr>
+                <tr v-for="item in services" :key="item.serviceCategoryId">
                   <td>X</td>
-                  <td>Suck D</td>
-                  <td>1.000.000</td>
-                  <td>2 Hour</td>
+                  <td>{{ item.serviceName }}</td>
+                  <td>{{item.price}}</td>
+                  <td>{{item.estimatedTime}}</td>
                   <td><Button>Edit</Button></td>
                   <td><Button>View</Button></td>
                 </tr>
-                <tr>
-                  <td>X</td>
-                  <td>Suck D</td>
-                  <td>1.000.000</td>
-                  <td>2 Hour</td>
-                  <td><Button>Edit</Button></td>
-                  <td><Button>View</Button></td>
-                </tr>
-                <tr>
-                  <td>X</td>
-                  <td>Suck D</td>
-                  <td>1.000.000</td>
-                  <td>2 Hour</td>
-                  <td><Button>Edit</Button></td>
-                  <td><Button>View</Button></td>
-                </tr>
-
-                <tr>
-                  <td>X</td>
-                  <td>Suck D</td>
-                  <td>1.000.000</td>
-                  <td>2 Hour</td>
-                  <td><Button>Edit</Button></td>
-                  <td><Button>View</Button></td>
-                </tr>
-                <tr>
-                  <td>X</td>
-                  <td>Suck D</td>
-                  <td>1.000.000</td>
-                  <td>2 Hour</td>
-                  <td><Button>Edit</Button></td>
-                  <td><Button>View</Button></td>
-                </tr>
+                <td colspan="6" v-if="services.length === 0">No data for table</td>
 
               </tbody>
             </table>

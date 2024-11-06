@@ -11,7 +11,6 @@ export default function useShopData() {
       // return response
 
     } catch (error) {
-      console.log('error', error)
     } finally {
       stopLoading()
     }

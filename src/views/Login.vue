@@ -56,7 +56,6 @@ const onLogin = async(e) => {
       goToHomePage()
     }
   } catch (error) {
-    console.log('error', error)
   } finally {
     stopLoading()
   }

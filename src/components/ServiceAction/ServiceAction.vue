@@ -5,8 +5,9 @@ import { useService } from '../../store';
 import ServiceViewModel from '../../ViewModel/ServiceCategoryViewModel';
 import { useLoading } from '../../composable/useLoading';
 import { authStore } from '../../store';
-import { AddServiceCategoryApi } from '../../api/servicesApi.js';
+import { AddServiceCategoryApi, EditServiceCategoryApi } from '../../api/servicesApi.js';
 import { getCurrentInstance } from 'vue';
+import { cloneDeep } from 'lodash'
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -22,7 +23,8 @@ const { startLoading, stopLoading } = useLoading()
 watch(() => props.visible, (value) => {
   if(value) {
     const { serviceCategoryById } = useService()
-    serviceActionData.value = serviceCategoryById
+    const serviceCategoryByIds = cloneDeep(serviceCategoryById) 
+    serviceActionData.value = serviceCategoryByIds
   } else {
     const { setServiceCategory } = useService()
     setServiceCategory(new ServiceViewModel())
@@ -30,17 +32,24 @@ watch(() => props.visible, (value) => {
 })
 
 const onConfirm = async () => {
+  const { action } = useService()
   try {
     startLoading()
-    const payload = {
+    let payload = {
       setServiceInactive: false,
       serviceCategoryName: serviceActionData.value.serviceCategoryName,
-      shared: null,
       shopId: shop.shopId,
       status: 1
     }
-    const response = await AddServiceCategoryApi(payload)
-    console.log('response', response)
+
+    let response = null
+    if(action === 1) {
+      payload = { ...payload, serviceCategoryId: serviceActionData.value.serviceCategoryId }
+      response = await EditServiceCategoryApi(payload)
+    } else {
+      payload = {...payload, shared: null}
+      response = await AddServiceCategoryApi(payload)
+    }
     if(!response.data.isOK) {
       proxy.$toast.error(response.data.error_message)
       return

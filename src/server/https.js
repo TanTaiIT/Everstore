@@ -19,7 +19,6 @@ const checkUserLogin = () => {
 }
 
 const waitRefreshTokenComplete = async () => {
-  console.log('waitRefreshTokenComplete')
   return new Promise((resolve) => {
     const auth = authStore()
     if (!auth.isRefreshTokenOK) {

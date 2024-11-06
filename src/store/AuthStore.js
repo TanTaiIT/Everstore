@@ -54,7 +54,6 @@ export const authStore = defineStore('auth', {
         }
 
         const response = await userLogin(culture, query)
-        console.log('response', response)
         if (response?.data?.isOK) {
           const { shopBasicInfo, userAuthInfo } = response?.data?.result || {}
           this.user = userAuthInfo
@@ -72,7 +71,6 @@ export const authStore = defineStore('auth', {
         return
 
       } catch (error) {
-        console.log('errror', error)
       }
     },
 

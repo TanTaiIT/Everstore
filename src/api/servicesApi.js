@@ -11,5 +11,9 @@ export const AddServiceCategoryApi = async (payload) => {
 }
 
 export const EditServiceCategoryApi = async (payload) => {
-  return await cmdHttp.post('goods/ServiceCategory', payload)
+  return await cmdHttp.put('goods/ServiceCategory', payload)
+}
+
+export const ServiceApi = async (payload) => {
+  return await readHttp.post('goods/Service', payload)
 }

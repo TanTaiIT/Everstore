@@ -1,18 +1,18 @@
 import { defineStore } from "pinia"
-import { ServiceCategory, AddServiceCategoryApi } from './../api/servicesApi.js'
+import { ServiceCategory, AddServiceCategoryApi, ServiceApi } from './../api/servicesApi.js'
 import ServiceCategoryViewModel from "../ViewModel/ServiceCategoryViewModel.js"
 export const useService = defineStore('service', {
   state: () => ({
     serviceCategory: [],
     action: 0,
-    serviceCategoryById: new ServiceCategoryViewModel()
+    serviceCategoryById: new ServiceCategoryViewModel(),
+    service: []
   }),
 
   actions: {
     async getServiceCategoryData(query) {
       try {
         const response = await ServiceCategory(query)
-        console.log('response', response)
         if (response?.data?.isOK) {
           this.serviceCategory = response?.data?.result?.items || []
         }
@@ -21,7 +21,6 @@ export const useService = defineStore('service', {
         return response
 
       } catch (error) {
-        console.log('error', error)
         throw new Error(error)
       }
     },
@@ -46,7 +45,6 @@ export const useService = defineStore('service', {
     async AddServiceCategory(query) {
       try {
         const response = await AddServiceCategoryApi(query)
-        console.log('response', response)
         if (!response?.data?.isOK) {
           throw new Error(response?.data?.errorMessages)
         }

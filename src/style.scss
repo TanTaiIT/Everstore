@@ -56,7 +56,13 @@ table {
   width: 100%;
 
   thead {
-    background-color: #dddddd9a;
+    background-color: #e5e5e5;
+    position: sticky;
+    top: 0;
+
+    z-index: 9999;
+
+
   }
 
   tbody {
@@ -66,7 +72,7 @@ table {
     tr {
       &:hover {
         cursor: pointer;
-        background-color: #68d523ad;
+        background-color: rgb(223 255 255 / 68%);
       }
 
     }
@@ -75,21 +81,11 @@ table {
 
 td,
 th {
-  border: 1px solid #dddddd;
   text-align: left;
   padding: 8px;
   text-align: center;
 }
 
-// tr {
-//   &:not(:first-child) {
-//     &:hover {
-//       background-color: #68d523ad;
-//     }
-//   }
-
-// }
-
-// tr:nth-child(even) {
-//   background-color: #dddddd;
-// }
+td {
+  border: 1px solid #e5e5e5;
+}
