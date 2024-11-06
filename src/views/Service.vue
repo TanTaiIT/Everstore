@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref, getCurrentInstance } from 'vue'
+import { onMounted, reactive, ref, getCurrentInstance, computed } from 'vue'
 import Button from '../components/Button/Button.vue'
 import { useService } from '../store'
 import { useLoading } from '../composable/useLoading'
@@ -9,14 +9,16 @@ import ServiceAction from '../components/ServiceAction/ServiceAction.vue'
 import { authStore } from '../store'
 import ServiceViewModel from '../ViewModel/ServiceCategoryViewModel'
 import { ServiceApi } from '../api/servicesApi'
+import Pagination from '../components/pagination/Pagination.vue'
 
 const isShowServiceAction = ref(false)
 const filterData = reactive({
   pageNumber: 1,
-  pageSize: 100,
+  pageSize: 10,
   shopId: 0,
   status: 1
 })
+const currentPage = ref(1)
 
 const { shop } = authStore()
 const { proxy } = getCurrentInstance()
@@ -46,7 +48,7 @@ const getServicesCategory = async () => {
     if(!response.data.isOK) {
       return
     }
-    serviceCategory.value = response?.data?.result?.items || []
+    serviceCategory.value = response?.data?.result
     currentPrepaidServiceId.value = serviceCategory.value[0]?.serviceCategoryId
 
   } catch (error) {
@@ -100,6 +102,12 @@ const onViewService = (id) => {
   currentPrepaidServiceId.value = id
   getService()
 }
+
+const setCurrentPage = (value) => {
+  filterData.pageNumber = value
+  currentPage.value = value
+  getServicesCategory()
+}
 </script>
 <template>
   <div class="service">
@@ -121,7 +129,7 @@ const onViewService = (id) => {
                 <Button @click="addServiceCategoryAction"> Add Category </Button>
               </div>
         </div>
-        <div class="h-[500px] overflow-auto">
+        <div class="h-[400px] overflow-auto">
             <table>
               <thead>
                 <tr>
@@ -133,17 +141,19 @@ const onViewService = (id) => {
               </thead>
 
               <tbody>
-                <tr v-for="category in serviceCategory" :key="category.serviceCategoryId">
+                <tr v-for="category in serviceCategory.items" :key="category.serviceCategoryId">
                   <td>X</td>
                   <td>{{ category.serviceCategoryName }}</td>
                   <td><Button :outline="true" variant="white-normal" text-color="blue-normal" @click="onEditServiceCategory(category.serviceCategoryId)">Edit</Button></td>
                   <td><Button text-color="white-normal" @click="onViewService(category.serviceCategoryId)">View</Button></td>
                 </tr>
                 <tr>
-                  <td colspan="4" v-if="serviceCategory.length === 0">No data for table</td>
+                  <td colspan="4" v-if="serviceCategory?.items?.length === 0">No data for table</td>
                 </tr>
               </tbody>
             </table>
+
+            <Pagination class="mt-3 mr-auto" :total-items="serviceCategory?.pagingInfo?.totalItems" :current-page="currentPage"  @set-current-page="setCurrentPage"/>
           </div>
           </div>
 

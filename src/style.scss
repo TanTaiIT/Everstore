@@ -57,18 +57,9 @@ table {
 
   thead {
     background-color: #e5e5e5;
-    position: sticky;
-    top: 0;
-
-    z-index: 9999;
-
-
   }
 
   tbody {
-    max-height: 300px;
-    overflow: auto;
-
     tr {
       &:hover {
         cursor: pointer;

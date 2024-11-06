@@ -16,7 +16,7 @@ export const useService = defineStore('service', {
         if (response?.data?.isOK) {
           this.serviceCategory = response?.data?.result?.items || []
         }
-        this.serviceCategory = response?.data?.result?.items || []
+        this.serviceCategory = response?.data?.result || []
 
         return response
 
