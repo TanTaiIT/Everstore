@@ -5,7 +5,7 @@
     </div>
 
     <div class="flex items-center justify-center gap-2">
-      <Button>Sales</Button>
+      <Button @click="gotoSalesPage">Sales</Button>
       <Button>Calendar</Button>
     </div>
 
@@ -44,5 +44,9 @@ const onLogout = () => {
 
 const goToHomeScreen = () => {
   router.push({name: 'home'})
+}
+
+const gotoSalesPage = () => {
+  router.push({name: 'sales'})
 }
 </script>

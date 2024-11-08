@@ -41,27 +41,27 @@ const modalClass = computed(() => {
 </script>
 
 <template>
-  <div>
+  <Teleport to="body">
     <div v-if="visible" class="w-full h-full fixed left-0 top-0 bg-gray-normal opacity-[0.5] z-100" ></div>
-  <transition name="modal" class="absolute inset-0 m-auto mx-auto my-auto h-60">
-    <div v-if="visible" class="bg-white-normal rounded-md p-3 shadow-md" :class="modalClass">
+    <transition name="modal" class="absolute inset-0 m-auto mx-auto my-auto h-60">
+      <div v-if="visible" class="bg-white-normal rounded-md p-3 shadow-md" :class="modalClass">
 
-      <div class="py-3 text-lg font-800">
-        <h1>{{ title }}</h1>
-      </div>
+        <div class="py-3 text-lg font-800">
+          <h1>{{ title }}</h1>
+        </div>
 
-      <div class="mt-3">
-        <slot name="content"/>
-      </div>
+        <div class="mt-3">
+          <slot name="content"/>
+        </div>
 
-      <div class="mt-3">
-        <div class="absolute bottom-2 right-2 flex gap-3">
-          <slot name="actions" />
+        <div class="mt-3">
+          <div class="absolute bottom-2 right-2 flex gap-3">
+            <slot name="actions" />
+          </div>
         </div>
       </div>
-    </div>
-</transition>
-</div>
+    </transition>
+  </Teleport>
 </template>
 
 <style lang="scss" scoped>

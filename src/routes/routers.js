@@ -5,6 +5,7 @@ import Home from "../views/Home.vue"
 import Service from "../views/Service.vue"
 import MainLayout from "../layouts/MainLayout.vue"
 import { authStore } from './../store/AuthStore.js'
+import SalesPage from "../views/SalesPage.vue"
 
 const routers = [
   {
@@ -31,6 +32,12 @@ const routers = [
         name: 'service',
         path: '/service',
         component: Service,
+      },
+
+      {
+        name: 'sales',
+        path: '/sales',
+        component: SalesPage
       }
     ]
   },

@@ -28,7 +28,7 @@ const props = defineProps({
 const buttonClass = computed(() => {
   return [
     `bg-${props.variant}`,
-    'rounded-md px-8 py-2',
+    'rounded-md px-8 py-2 min-w-[200px]',
     `text-${props.textColor}`,
     {'border-[1px]' : props.outline},
 
