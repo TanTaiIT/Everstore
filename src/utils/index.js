@@ -20,3 +20,17 @@ export function convertDateToTimeZone(date_local) {
 
   return date_timezone
 }
+
+export function convertMinuteToHour(minute) {
+  const hour = Math.floor(minute / 60) 
+  const min = minute % 60
+  if(minute === 0) return '0m'
+  if(hour === 0) return min + 'm'
+  if(min === 0) return hour + 'h'
+
+  return Math.floor(minute / 60) + 'h' + (minute % 60)
+}
+
+export function formatNumber(number) {
+  return number.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}

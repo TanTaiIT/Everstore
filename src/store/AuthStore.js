@@ -82,7 +82,7 @@ export const authStore = defineStore('auth', {
           authToken: accessToken
         }
         const response = await refreshTokenShop(culture, payload)
-        this.isRefreshingToken = false
+        
         if (response?.data?.isOK) {
           this.accessToken = response?.data?.result?.authToken
           this.refreshToken = response?.data?.result?.refreshToken
@@ -90,8 +90,11 @@ export const authStore = defineStore('auth', {
           setAccessToken(this.accessToken)
           setRefreshToken(this.refreshToken)
 
+          this.isRefreshingToken = false
           return response
         }
+        this.isRefreshingToken = false
+        
       } catch (error) {
         throw new Error(error)
       }

@@ -18,30 +18,30 @@ const checkUserLogin = () => {
   }
 }
 
-const waitRefreshTokenComplete = async () => {
-  return new Promise((resolve) => {
-    const auth = authStore()
-    if (!auth.isRefreshTokenOK) {
-      return resolve(auth.isRefreshTokenOK)
-    }
+// const waitRefreshTokenComplete = async () => {
+//   return new Promise((resolve) => {
+//     const auth = authStore()
+//     if (!auth.isRefreshTokenOK) {
+//       return resolve(auth.isRefreshTokenOK)
+//     }
 
-    const unwatcher = watch(() => auth.isRefreshingToken, (isRefreshingToken) => {
-      if (!isRefreshingToken) {
-        unwatcher()
-        resolve(auth.isRefreshTokenOK)
-      }
-    }, { immediate: true })
-  })
-}
+//     const unwatcher = watch(() => auth.isRefreshingToken, (isRefreshingToken) => {
+//       if (!isRefreshingToken) {
+//         unwatcher()
+//         resolve(auth.isRefreshTokenOK)
+//       }
+//     }, { immediate: true })
+//   })
+// }
 
-const waitRefreshToken = async (config) => {
-  const { setRefreshingToken } = authStore()
-  await waitRefreshTokenComplete()
-  if (config.url.match('/auth/RefreshToken')) {
-    setRefreshingToken(true)
-  }
-  return config
-}
+// const waitRefreshToken = async (config) => {
+//   const { setRefreshingToken } = authStore()
+//   await waitRefreshTokenComplete()
+//   if (config.url.match('/auth/RefreshToken')) {
+//     setRefreshingToken(true)
+//   }
+//   return config
+// }
 export const createHttp = ({ type = '', version = 1, options = {} }) => {
   const http = axios.create({
     headers: {
@@ -53,10 +53,10 @@ export const createHttp = ({ type = '', version = 1, options = {} }) => {
   })
 
   // axios request
-  http.interceptors.request.use(waitRefreshToken)
+  // http.interceptors.request.use(waitRefreshToken)
   http.interceptors.request.use(function (config) {
     const isLogin = checkUserLogin()
-    const { accessToken, isRefreshingToken } = authStore()
+    const { accessToken } = authStore()
     if (isLogin) {
       config.headers.Authorization = `Bearer ${accessToken}`
     }
@@ -66,12 +66,14 @@ export const createHttp = ({ type = '', version = 1, options = {} }) => {
   // axios response
   http.interceptors.response.use(null, async error => {
     try {
-      const { refreshTokenApi, accessToken, refreshToken } = authStore()
+      const { refreshTokenApi } = authStore()
       if (error.status === 401) {
         const accessToken = localStorage.getItem('accessToken') || ''
         const refreshToken = localStorage.getItem('refreshToken') || ''
         const response = await refreshTokenApi(refreshToken, accessToken)
         if (response?.data?.isOK) {
+          const { accessToken } = authStore()
+          error.config.headers.Authorization = `Bearer ${accessToken}`
           return axios(error?.config)
         }
       }
@@ -80,7 +82,6 @@ export const createHttp = ({ type = '', version = 1, options = {} }) => {
     } catch (error) {
       throw error
     }
-
   })
 
 

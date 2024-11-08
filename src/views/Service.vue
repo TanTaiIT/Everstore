@@ -10,14 +10,25 @@ import { authStore } from '../store'
 import ServiceViewModel from '../ViewModel/ServiceCategoryViewModel'
 import { ServiceApi } from '../api/servicesApi'
 import Pagination from '../components/pagination/Pagination.vue'
+import { convertMinuteToHour, formatNumber } from './../utils/index'
+import { filter } from 'lodash'
 
 const isShowServiceAction = ref(false)
-const filterData = reactive({
+const filterDataServiceCategory = reactive({
   pageNumber: 1,
   pageSize: 10,
   shopId: 0,
   status: 1
 })
+
+const filterDataService = reactive({
+  pageNumber: 1,
+  pageSize: 10,
+  shopId: 0,
+  status: 1,
+  serviceCategoryId: 0
+})
+
 const currentPage = ref(1)
 
 const { shop } = authStore()
@@ -25,8 +36,11 @@ const { proxy } = getCurrentInstance()
 const { getServiceCategoryData, setAction } = useService()
 const serviceCategory = ref([])
 const services = ref([])
+const selectServiceCategory = ref({})
 const currentPrepaidServiceId = ref(0)
 const { startLoading, stopLoading } = useLoading()
+const isShowInactiveServiceCategory = ref(false)
+const isShowInactiveService = ref(false)
 const addServiceCategoryAction = () => {
   isShowServiceAction.value = true
   setAction({
@@ -36,7 +50,8 @@ const addServiceCategoryAction = () => {
 }
 
 onMounted(async() => {
-  filterData.shopId = shop.shopId
+  filterDataServiceCategory.shopId = shop.shopId
+  filterDataService.shopId = shop.shopId
   await getServicesCategory()
   getService()
 })
@@ -44,12 +59,12 @@ onMounted(async() => {
 const getServicesCategory = async () => {
   try {
     startLoading()
-    const response = await getServiceCategoryData(filterData)
+    const response = await getServiceCategoryData({...filterDataServiceCategory, status: isShowInactiveServiceCategory.value ? 1 : 0})
     if(!response.data.isOK) {
       return
     }
     serviceCategory.value = response?.data?.result
-    currentPrepaidServiceId.value = serviceCategory.value[0]?.serviceCategoryId
+    currentPrepaidServiceId.value = serviceCategory.value?.items[0]?.serviceCategoryId
 
   } catch (error) {
     throw new Error(error)
@@ -61,30 +76,35 @@ const getServicesCategory = async () => {
 const getService = async () => {
   try {
     startLoading()
-
-    const payload = {...filterData, serviceCategoryId: currentPrepaidServiceId.value}
-    const response = await ServiceApi(payload)
+    const selectCategory = serviceCategory.value?.items?.find(item => item.serviceCategoryId === currentPrepaidServiceId.value)
+    if(!selectCategory) {
+      return
+    } else {
+      selectServiceCategory.value = selectCategory
+    }
+    const response = await ServiceApi({...filterDataService, serviceCategoryId: currentPrepaidServiceId.value})
 
     if(!response.data.isOK) {
-      proxy.$toast(response.data.error_message)
+      proxy.$toast.error(response.data.error_message)
       return
     }
 
     services.value = response.data.result.items || []
   } catch (error) {
-    proxy.$toast(error.message)
+    proxy.$toast.error(error.message)
   } finally {
     stopLoading()
   }
 }
 
 const onEditServiceCategory = (id) => {
-  const findIndex = serviceCategory.value.findIndex(item => item.serviceCategoryId === id)
+  const findIndex = serviceCategory?.value?.items.findIndex(item => item.serviceCategoryId === id)
 
   let signleCategory = new ServiceViewModel()
   if(findIndex !== -1) {
-    signleCategory = serviceCategory.value[findIndex]
+    signleCategory = serviceCategory.value.items[findIndex]
   }
+  
 
   setAction({
     action: 1,
@@ -100,11 +120,35 @@ const onAddServiceCategory = () => {
 
 const onViewService = (id) => {
   currentPrepaidServiceId.value = id
+  const selectService = serviceCategory.value.items.find(item => item.serviceCategoryId === id)
+  if(!selectService) {
+    return
+  } else {
+    selectServiceCategory.value = selectService
+  }
   getService()
 }
 
+const onShowInactiveServiceCategory = async() => {
+  try {
+    startLoading()
+    const response = await getServiceCategoryData({...filterDataServiceCategory, status: isShowInactiveServiceCategory.value ? 1 : 0})
+    if(!response.data.isOK) {
+      proxy.$toast.error(response.data.error_message)
+      return
+    }
+
+    serviceCategory.value = response.data.result
+    filterDataServiceCategory.pageNumber = 1
+    currentPage.value = 1
+  } catch (error) {
+    proxy.$toast.error(error.message)
+  } finally {
+    stopLoading()
+  }
+}
 const setCurrentPage = (value) => {
-  filterData.pageNumber = value
+  filterDataServiceCategory.pageNumber = value
   currentPage.value = value
   getServicesCategory()
 }
@@ -119,7 +163,7 @@ const setCurrentPage = (value) => {
         <div class="flex mt-5 gap-[10px]">
           <div class="flex-1">
             <div class="flex items-center justify-between mb-3">
-              <Checkbox>
+              <Checkbox @input="onShowInactiveServiceCategory" v-model="isShowInactiveServiceCategory">
                 <template #label>
                   <label class="cursor-pointer" for="checkbox">Show Inactive</label>
                 </template>
@@ -129,7 +173,7 @@ const setCurrentPage = (value) => {
                 <Button @click="addServiceCategoryAction"> Add Category </Button>
               </div>
         </div>
-        <div class="h-[400px] overflow-auto">
+        <div class="h-[400px] overflow-auto relative">
             <table>
               <thead>
                 <tr>
@@ -160,8 +204,8 @@ const setCurrentPage = (value) => {
           <div class="flex-1">
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center">
-                <div class="w-[90px] h-[30px] bg-green rounded-full flex items-center justify-center text-white-normal">
-                  Tai Nguyen
+                <div class="w-[90px] h-[30px] bg-green rounded-full flex items-center overflow-hidden justify-center text-white-normal ">
+                  <span class="w-[100px] d-block whitespace-nowrap text-center">{{ selectServiceCategory.serviceCategoryName }}</span>
                 </div>
                 <Checkbox class="ml-3">
                   <template #label>
@@ -191,8 +235,8 @@ const setCurrentPage = (value) => {
                 <tr v-for="item in services" :key="item.serviceCategoryId">
                   <td>X</td>
                   <td>{{ item.serviceName }}</td>
-                  <td>{{item.price}}</td>
-                  <td>{{item.estimatedTime}}</td>
+                  <td>{{ formatNumber(item.price)}}</td>
+                  <td>{{ convertMinuteToHour(item.estimatedTime) }}</td>
                   <td><Button>Edit</Button></td>
                   <td><Button>View</Button></td>
                 </tr>
