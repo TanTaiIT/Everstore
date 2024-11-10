@@ -6,6 +6,7 @@ import Service from "../views/Service.vue"
 import MainLayout from "../layouts/MainLayout.vue"
 import { authStore } from './../store/AuthStore.js'
 import SalesPage from "../views/SalesPage.vue"
+import ClientSalesPage from "../views/ClientSalesPage.vue"
 
 const routers = [
   {
@@ -37,7 +38,13 @@ const routers = [
       {
         name: 'sales',
         path: '/sales',
-        component: SalesPage
+        component: SalesPage,
+
+      },
+      {
+        name: 'sales-client',
+        path: '/sales/:shopId/:clientId',
+        component: ClientSalesPage
       }
     ]
   },

@@ -51,6 +51,7 @@ const onLogin = async(e) => {
       password: loginData.value.password
     }
     const response = await authUser(payload)
+    console.log('respnse', response)
 
     if(response?.data?.isOK) {
       goToHomePage()

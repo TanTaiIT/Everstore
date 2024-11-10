@@ -18,6 +18,7 @@ export const useHomeStore = defineStore('home', {
     async fetchHomeData(payload) {
       try {
         const response = await fetchHomeApi(payload)
+        console.log('lang dong', response)
 
         if (response?.data?.isOK) {
           this.systemNotice = response?.data?.result?.systemNotices

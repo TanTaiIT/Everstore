@@ -1,6 +1,7 @@
 import axios from 'axios'
 const base_url = 'https://ahasoft-salon-admin-http-aggregator-staging.azurewebsites.net'
 import { authStore } from '../store/AuthStore'
+import { errorMessages } from 'vue/compiler-sfc'
 const DEFAULT_HEADERS = {
   'Accept': 'application/json',
   'Content-Type': 'application/json',
@@ -84,8 +85,23 @@ export const createHttp = ({ type = '', version = 1, options = {} }) => {
     }
   })
 
+  // http.interceptors.response.use(error => {
+  //   const responses = undefined
+  //   console.log('error', error)
+  //   // if (!response?.data?.isOK) {
+  //   //   console.log('res', response)
+  //   //   responses.data = {
+  //   //     data: {
+  //   //       data: null,
+  //   //       errorMessages: response?.data?.errorMessages,
+  //   //       isOK: false
 
+  //   //     }
+  //   //   }
+  //   // }
 
+  //   // return responses
+  // })
   return http
 }
 

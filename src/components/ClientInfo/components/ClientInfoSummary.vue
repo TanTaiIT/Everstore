@@ -1,4 +1,17 @@
 <script setup>
+import { onMounted } from 'vue';
+
+//props, emit
+const props = defineProps({
+  client: {
+    type: Object,
+    default: () => ({})
+  }
+})
+
+onMounted(() => {
+  console.log('client', props.client)
+})
 
 </script>
 
@@ -9,11 +22,11 @@
     </div>
 
     <div class="flex flex-col gap-3">
-      <span>Quynh Tran</span>
-      <span>01222026282 / 01689114396</span>
-      <span>No: </span>
-      <span>Preffered Staff: </span>
-      <span>Birthday:</span>
+      <span>{{ client.clientName }}</span>
+      <span>{{ client.mobileNumber }} / {{ client.phoneNumber }}</span>
+      <span>No: {{ client.memberNumber || '' }}</span>
+      <span>Preffered Staff: {{ client.preferredStaffId }} </span>
+      <span>Birthday: {{ client.birthDD }} / {{ client.birthMonth }} / {{ client.birthYear }}</span>
     </div>
   </div>
 </template>
